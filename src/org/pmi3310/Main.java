@@ -12,6 +12,7 @@ public class Main {
     String lineContents;
     String[] parts;
     Vector<Pair<String, Integer>> pairs;
+    Vector<Pair<String, Integer>> collocations;
 
     public Main() throws IOException {
         BufferedReader bReader = new BufferedReader(new FileReader("input.txt"));
@@ -37,14 +38,40 @@ public class Main {
             pairs.add(pair);
         }
         pairs.sort((Pair<String, Integer> o1, Pair<String, Integer> o2) -> o2.getValue() - o1.getValue());
+        Map<String, Integer> countsPairs = new LinkedHashMap<>();
+        String previos = parts[0];
+        for(int i = 1; i<parts.length-1; ++i){
+            if(parts[i].equalsIgnoreCase(pairs.firstElement().getKey())) {
+                Integer count = countsPairs.get(parts[i-1]);
+                if (count == null) {
+                    countsPairs.put(parts[i-1], 1);
+                } else {
+                    countsPairs.put(parts[i-1], count + 1);
+                }
+                count = counts.get(parts[i+1]);
+                if (count == null) {
+                    countsPairs.put(parts[i+1], 1);
+                } else {
+                    countsPairs.put(parts[i+1], count + 1);
+                }
+            }
+        }
+        collocations = new Vector<>();
+        for(Map.Entry<String, Integer> entry : countsPairs.entrySet()){
+            pair = new Pair<>(entry.getKey(),entry.getValue());
+            collocations.add(pair);
+        }
+        collocations.sort((Pair<String, Integer> o1, Pair<String, Integer> o2) -> o2.getValue() - o1.getValue());
     }
 
     public static void main(String[] args) {
         try
         {
             Main m = new Main();
-            for(Pair<String, Integer> a :m.pairs)
-            System.out.println(a);
+            /*for(Pair<String, Integer> a : m.pairs)*/
+            System.out.println(m.pairs.firstElement());
+            for(Pair<String, Integer> a : m.collocations)
+                System.out.println(a.getKey()+" "+a.getValue());
 
         }
         catch (FileNotFoundException e){
